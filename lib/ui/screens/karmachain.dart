@@ -24,10 +24,12 @@ class _KarmachainState extends State<Karmachain> {
 
   GetGenesisDataResponse? genesisData;
   BlockchainStats? chainData;
+  bool apiOffline = false;
 
   @override
   void initState() {
     super.initState();
+    apiOffline = false;
 
     Future.delayed(Duration.zero, () async {
       try {
@@ -44,6 +46,7 @@ class _KarmachainState extends State<Karmachain> {
           // debugPrint(genesis_data.toString());
         });
       } catch (e) {
+        apiOffline = true;
         if (!mounted) return;
         StatusAlert.show(context,
             duration: const Duration(seconds: 2),
@@ -61,7 +64,7 @@ class _KarmachainState extends State<Karmachain> {
   /// Return the list secionts
   List<CupertinoListSection> _getSections(BuildContext context) {
     List<CupertinoListTile> tiles = [];
-    if (chainData == null || genesisData == null) {
+    if (!apiOffline && (chainData == null || genesisData == null)) {
       // todo: add loader
       tiles.add(
         const CupertinoListTile.notched(
@@ -69,6 +72,26 @@ class _KarmachainState extends State<Karmachain> {
           leading: Icon(CupertinoIcons.clock),
           trailing: CupertinoActivityIndicator(),
           // todo: number format
+        ),
+      );
+      return [
+        CupertinoListSection.insetGrouped(
+          children: tiles,
+        ),
+      ];
+    }
+
+    if (apiOffline) {
+      tiles.add(
+        CupertinoListTile.notched(
+          title: const Text('Status'),
+          leading: const Icon(
+            CupertinoIcons.circle_fill,
+            color: CupertinoColors.systemRed,
+            size: 18,
+          ),
+          trailing: Text('Offline',
+              style: CupertinoTheme.of(context).textTheme.textStyle),
         ),
       );
       return [
