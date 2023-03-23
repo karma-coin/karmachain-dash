@@ -11,7 +11,7 @@ const RESOURCES = {
 "canvaskit/canvaskit.wasm": "3de12d898ec208a5f31362cc00f09b9e",
 "favicon.png": "1a440446cacbced89ecad1ee3dc7fc62",
 "version.json": "87a9d26103e1dd6884131c7ddc4af876",
-"manifest.json": "1e349c16b24eeb10ac0bff8c6a71b514",
+"manifest.json": "683b66d7b5922a15360f6d8d4c7300fe",
 "assets/AssetManifest.json": "fe64b3803f4b5c1f0c4d8433942a05a8",
 "assets/assets/ca/lets-encrypt-r3.pem": "be77e5992c00fcd753d1b9c11d3768f2",
 "assets/fonts/MaterialIcons-Regular.otf": "e7069dfd19b331be16bed984668fe080",
@@ -22,12 +22,14 @@ const RESOURCES = {
 "assets/packages/status_alert/assets/fonts/SFNS.ttf": "9e14b4e72dec1db9a60d2636bbfe64f2",
 "assets/FontManifest.json": "340ba7db15928dafeb99710b23eb301b",
 "assets/NOTICES": "73b9a395f986f14f16e0cee25e260c4e",
-"index.html": "248a90cb5611e97906a6a8e867c149ed",
-"/": "248a90cb5611e97906a6a8e867c149ed",
+"index.html": "7f0905f480ba2822785b01600219fd64",
+"/": "7f0905f480ba2822785b01600219fd64",
 "icons/Icon-512.png": "4d029c2692691ebf213fc8ff646c7f26",
 "icons/Icon-192.png": "7e4cccf108e12a39292d5806c6450f7a",
 "icons/Icon-maskable-512.png": "f790d4c3526e16dd188ea2943da3c93e",
-"icons/Icon-maskable-192.png": "3be355a0d5ee247f8d11d00ebabe7c5a"
+"icons/Icon-maskable-192.png": "3be355a0d5ee247f8d11d00ebabe7c5a",
+"splash/splash.js": "123c400b58bea74c1305ca3ac966748d",
+"splash/style.css": "fd7e08a5fc9e29a741f7106de4c3c652"
 };
 
 // The application shell files that are downloaded before a service worker can
