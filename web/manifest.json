@@ -1,6 +1,6 @@
 {
-    "name": "karmachain_dash",
-    "short_name": "karmachain_dash",
+    "name": "Karmachain Dashboard",
+    "short_name": "Karmachain Dash",
     "start_url": ".",
     "display": "standalone",
     "background_color": "#0175C2",
