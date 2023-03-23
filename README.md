@@ -1,4 +1,4 @@
-# karmachain_dash
+# karmachain-dash
 
 A Karmachain dashbaord
 
