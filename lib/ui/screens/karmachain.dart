@@ -284,7 +284,18 @@ class _KarmachainState extends State<Karmachain> {
           padding: const EdgeInsets.only(left: 0),
           child: const Text(_githubUrl),
           onPressed: () async {
-            await openUrl(context, _githubUrl);
+            if (!await openUrl(_githubUrl)) {
+              if (context.mounted) {
+                StatusAlert.show(context,
+                    duration: const Duration(seconds: 4),
+                    title: 'No Internet',
+                    subtitle: 'Check your connection',
+                    configuration: const IconConfiguration(
+                        icon: CupertinoIcons.exclamationmark_triangle),
+                    dismissOnBackgroundTap: true,
+                    maxWidth: statusAlertWidth);
+              }
+            }
           },
         ),
       ),
@@ -299,7 +310,18 @@ class _KarmachainState extends State<Karmachain> {
           padding: const EdgeInsets.only(left: 0),
           child: const Text(_githubNextrUrl),
           onPressed: () async {
-            await openUrl(context, _githubNextrUrl);
+            if (!await openUrl(_githubNextrUrl)) {
+              if (context.mounted) {
+                StatusAlert.show(context,
+                    duration: const Duration(seconds: 4),
+                    title: 'No Internet',
+                    subtitle: 'Check your connection',
+                    configuration: const IconConfiguration(
+                        icon: CupertinoIcons.exclamationmark_triangle),
+                    dismissOnBackgroundTap: true,
+                    maxWidth: statusAlertWidth);
+              }
+            }
           },
         ),
       ),
