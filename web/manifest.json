@@ -1,11 +1,11 @@
 {
-    "name": "Karmachain Dashboard",
-    "short_name": "Karmachain Dash",
+    "name": "Karmachain Dash",
+    "short_name": "KC",
     "start_url": ".",
     "display": "standalone",
     "background_color": "#0175C2",
     "theme_color": "#0175C2",
-    "description": "A Karmachain dashbaord",
+    "description": "Karma Coin Testnet Dashboard",
     "orientation": "portrait-primary",
     "prefer_related_applications": false,
     "icons": [
