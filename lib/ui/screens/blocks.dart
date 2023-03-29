@@ -1,6 +1,5 @@
 import 'package:fixnum/fixnum.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:intl/intl.dart';
 import 'package:karmachain_dash/common_libs.dart';
 import 'package:karmachain_dash/data/kc_amounts_formatter.dart';
 import 'package:karmachain_dash/services/api/types.pb.dart';
@@ -8,7 +7,6 @@ import 'package:karmachain_dash/ui/helpers/widget_utils.dart';
 import 'package:status_alert/status_alert.dart';
 import 'package:karmachain_dash/services/api/api.pbgrpc.dart';
 import 'package:time_ago_provider/time_ago_provider.dart' as time_ago;
-import 'package:karmachain_dash/common/extensions.dart';
 
 /// Display user details for provided user or for local user
 class Blocks extends StatefulWidget {

@@ -1,4 +1,3 @@
-import 'package:fixnum/fixnum.dart';
 import 'package:go_router/go_router.dart';
 import 'package:karmachain_dash/common_libs.dart';
 import 'package:karmachain_dash/ui/screens/blocks.dart';
@@ -56,6 +55,6 @@ final GoRouter appRouter = GoRouter(
           name: ScreenNames.blocks,
           path: ScreenPaths.blocks,
           builder: (BuildContext context, GoRouterState state) {
-            return Blocks();
+            return const Blocks();
           }),
     ]);
