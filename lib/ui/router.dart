@@ -1,17 +1,21 @@
+import 'package:fixnum/fixnum.dart';
 import 'package:go_router/go_router.dart';
 import 'package:karmachain_dash/common_libs.dart';
+import 'package:karmachain_dash/ui/screens/blocks.dart';
 import 'package:karmachain_dash/ui/screens/karmachain.dart';
 
 /// Shared paths / urls used across the app
 class ScreenPaths {
   /// Guest home screen (playground for now)
-  static String welcome = '/';
+  static String home = '/';
+  static String blocks = '/blocks';
 }
 
 /// Shared screen names across the app
 class ScreenNames {
   /// Guest home screen (playground for now)
-  static String welcome = 'welcome';
+  static String home = 'home';
+  static String blocks = 'blocks';
 }
 
 popUntil(String path) {
@@ -32,7 +36,7 @@ void pushNamedAndRemoveUntil(String path) {
 }
 
 String _getInitialLocation() {
-  return ScreenPaths.welcome;
+  return ScreenPaths.home;
 }
 
 /// The route configuration
@@ -43,10 +47,15 @@ final GoRouter appRouter = GoRouter(
     initialLocation: _getInitialLocation(),
     routes: <RouteBase>[
       GoRoute(
-          // Initial app screen (playground for now)
-          name: ScreenNames.welcome,
-          path: ScreenPaths.welcome,
+          name: ScreenNames.home,
+          path: ScreenPaths.home,
           builder: (BuildContext context, GoRouterState state) {
-            return const Karmachain(); //WelcomeScreen(title: 'Karma Coin');
+            return const Karmachain();
+          }),
+      GoRoute(
+          name: ScreenNames.blocks,
+          path: ScreenPaths.blocks,
+          builder: (BuildContext context, GoRouterState state) {
+            return Blocks();
           }),
     ]);
