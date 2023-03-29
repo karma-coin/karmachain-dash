@@ -151,6 +151,7 @@ class _BlocksState extends State<Blocks> {
         ),
       ),
       trailing: const CupertinoListTileChevron(),
+      leading: const FaIcon(FontAwesomeIcons.square, size: 20),
     );
   }
 
