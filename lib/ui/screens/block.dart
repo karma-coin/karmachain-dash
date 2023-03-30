@@ -145,10 +145,14 @@ class _BlockScreenState extends State<BlockScreen> {
 
     tiles.add(
       CupertinoListTile.notched(
-        title: Text(txEx.getTransactionTypeDisplayName()),
+        title: Text(
+          txEx.getTransactionTypeDisplayName(),
+          style: CupertinoTheme.of(context).textTheme.textStyle.merge(TextStyle(
+              color: CupertinoTheme.of(context).textTheme.textStyle.color)),
+        ),
+        leading: Container(),
         trailing: Text(txEx.getTimesAgo(),
             style: CupertinoTheme.of(context).textTheme.textStyle),
-        leading: const Icon(CupertinoIcons.doc, size: 28),
       ),
     );
 
@@ -164,13 +168,13 @@ class _BlockScreenState extends State<BlockScreen> {
           CupertinoListTile.notched(
             title: Text(
               title,
-              style: const TextStyle(fontSize: 20, fontWeight: FontWeight.w400),
+              style: CupertinoTheme.of(context).textTheme.textStyle,
             ),
             leading: Text(
               emoji,
               style: CupertinoTheme.of(context).textTheme.textStyle.merge(
                   TextStyle(
-                      fontSize: 24,
+                      fontSize: 20,
                       color: CupertinoTheme.of(context)
                           .textTheme
                           .textStyle
@@ -186,7 +190,8 @@ class _BlockScreenState extends State<BlockScreen> {
 
         tiles.add(
           CupertinoListTile.notched(
-            title: const Text('Payment'),
+            title: Text('Payment',
+                style: CupertinoTheme.of(context).textTheme.textStyle),
             trailing: Text(amount,
                 style: CupertinoTheme.of(context).textTheme.textStyle),
             subtitle: Text(usdEstimate),
