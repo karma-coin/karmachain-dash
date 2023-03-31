@@ -184,4 +184,14 @@ class SignedTransactionWithStatusEx {
         return '⚠️ Unrecognized transaction type';
     }
   }
+
+  String getTransactionTypeDisplayNameWithDirection(bool incoming) {
+    String name = getTransactionTypeDisplayName();
+    if (incoming) {
+      name += ' (receieved)';
+    } else {
+      name += ' (sent)';
+    }
+    return name;
+  }
 }

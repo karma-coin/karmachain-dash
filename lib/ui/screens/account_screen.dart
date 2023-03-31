@@ -1,3 +1,4 @@
+import 'package:go_router/go_router.dart';
 import 'package:karmachain_dash/common_libs.dart';
 import 'package:karmachain_dash/data/genesis_config.dart';
 import 'package:karmachain_dash/data/kc_amounts_formatter.dart';
@@ -7,8 +8,10 @@ import 'package:karmachain_dash/data/signed_transaction.dart';
 import 'package:karmachain_dash/services/api/api.pb.dart';
 import 'package:karmachain_dash/services/api/types.pb.dart';
 import 'package:karmachain_dash/ui/helpers/widget_utils.dart';
+import 'package:karmachain_dash/ui/router.dart';
 import 'package:karmachain_dash/ui/widgets/pill.dart';
 import 'package:status_alert/status_alert.dart';
+import 'package:quiver/collection.dart';
 
 // Display list of transactions for provided account id or for a block
 class AccountScreen extends StatefulWidget {
@@ -264,14 +267,31 @@ class _AccountScreenState extends State<AccountScreen> {
 
     PaymentTransactionV1? paymentData = txEx.getPaymentData();
 
+    final User fromUser = txEx.getFromUser();
+    final fromUserPhoneNumber =
+        fromUser.mobileNumber.number.formatPhoneNumber();
+
+    bool incoming = true;
+    if (listsEqual(fromUser.accountId.data, user!.accountId.data)) {
+      incoming = false;
+    }
+
     tiles.add(
       CupertinoListTile.notched(
         title: Text(
-          txEx.getTransactionTypeDisplayName(),
+          txEx.getTransactionTypeDisplayNameWithDirection(incoming),
           style: CupertinoTheme.of(context).textTheme.textStyle.merge(TextStyle(
               color: CupertinoTheme.of(context).textTheme.textStyle.color)),
         ),
-        leading: Container(),
+        leading: incoming
+            ? const Icon(
+                CupertinoIcons.arrow_left,
+                size: 30,
+              )
+            : const Icon(
+                CupertinoIcons.arrow_right,
+                size: 30,
+              ),
         trailing: Text(txEx.getTimesAgo(),
             style: CupertinoTheme.of(context).textTheme.textStyle),
       ),
@@ -322,28 +342,29 @@ class _AccountScreenState extends State<AccountScreen> {
       }
     }
 
-    final User fromUser = txEx.getFromUser();
-    final fromUserPhoneNumber =
-        fromUser.mobileNumber.number.formatPhoneNumber();
-
     // from
     tiles.add(
       CupertinoListTile.notched(
-        title:
-            Text('From', style: CupertinoTheme.of(context).textTheme.textStyle),
-        subtitle: Column(
-          mainAxisAlignment: MainAxisAlignment.start,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(fromUser.userName),
-            Text(fromUser.accountId.data.toShortHexString()),
-            const SizedBox(height: 6),
-          ],
-        ),
-        trailing: Text(fromUserPhoneNumber,
-            style: CupertinoTheme.of(context).textTheme.textStyle),
-        leading: const Icon(CupertinoIcons.arrow_right, size: 28),
-      ),
+          title: Text('From',
+              style: CupertinoTheme.of(context).textTheme.textStyle),
+          subtitle: Column(
+            mainAxisAlignment: MainAxisAlignment.start,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(fromUser.userName),
+              Text(fromUser.accountId.data.toShortHexString()),
+              const SizedBox(height: 6),
+            ],
+          ),
+          trailing: Text('+$fromUserPhoneNumber',
+              style: CupertinoTheme.of(context).textTheme.textStyle),
+          leading: const Icon(CupertinoIcons.arrow_right, size: 28),
+          onTap: () {
+            if (incoming) {
+              context.pushNamed(ScreenNames.user,
+                  params: {'accountId': fromUser.accountId.data.toHexString()});
+            }
+          }),
     );
 
     if (paymentData != null) {
@@ -363,7 +384,7 @@ class _AccountScreenState extends State<AccountScreen> {
               const SizedBox(height: 6),
             ],
           ),
-          trailing: Text(toUserPhoneNumber,
+          trailing: Text('+$toUserPhoneNumber',
               style: CupertinoTheme.of(context).textTheme.textStyle),
           leading: const Icon(CupertinoIcons.arrow_left, size: 28),
         ),
