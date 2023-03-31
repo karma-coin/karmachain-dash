@@ -1,4 +1,5 @@
 import 'package:fixnum/fixnum.dart';
+import 'package:go_router/go_router.dart';
 import 'package:karmachain_dash/common_libs.dart';
 import 'package:karmachain_dash/data/genesis_config.dart';
 import 'package:karmachain_dash/data/kc_amounts_formatter.dart';
@@ -8,6 +9,7 @@ import 'package:karmachain_dash/data/signed_transaction.dart';
 import 'package:karmachain_dash/services/api/api.pb.dart';
 import 'package:karmachain_dash/services/api/types.pb.dart';
 import 'package:karmachain_dash/ui/helpers/widget_utils.dart';
+import 'package:karmachain_dash/ui/router.dart';
 import 'package:karmachain_dash/ui/widgets/block_widget.dart';
 import 'package:karmachain_dash/ui/widgets/pill.dart';
 import 'package:status_alert/status_alert.dart';
@@ -259,6 +261,10 @@ class _BlockScreenState extends State<BlockScreen> {
         trailing: Text(fromUserPhoneNumber,
             style: CupertinoTheme.of(context).textTheme.textStyle),
         leading: const Icon(CupertinoIcons.arrow_right, size: 28),
+        onTap: () {
+          context.pushNamed(ScreenNames.user,
+              params: {'accountId': fromUser.accountId.data.toHexString()});
+        },
       ),
     );
 
@@ -282,6 +288,10 @@ class _BlockScreenState extends State<BlockScreen> {
           trailing: Text(toUserPhoneNumber,
               style: CupertinoTheme.of(context).textTheme.textStyle),
           leading: const Icon(CupertinoIcons.arrow_left, size: 28),
+          onTap: () {
+            context.pushNamed(ScreenNames.user,
+                params: {'accountId': toUser.accountId.data.toHexString()});
+          },
         ),
       );
     }

@@ -4,6 +4,7 @@ import 'package:karmachain_dash/ui/helpers/widget_utils.dart';
 import 'package:status_alert/status_alert.dart';
 import 'package:karmachain_dash/services/api/api.pbgrpc.dart';
 
+// todo: start using it instead of hard-coded ones....
 class Transaction extends StatefulWidget {
   final List<int>? txHash;
   final SignedTransactionWithStatus? tx;

@@ -10,7 +10,8 @@ import 'package:status_alert/status_alert.dart';
 import 'package:karmachain_dash/services/api/api.pbgrpc.dart' as api_types;
 import 'package:quiver/collection.dart';
 
-// Display list of transactions for provided account id or for a block
+// Display list of transactions for provided account id or for a block - unused
+// Consider to change to funciton that returns section for a txs
 class Transactions extends StatefulWidget {
   final List<List<int>>? txHashes;
   final List<int>? accountId;

@@ -1,6 +1,7 @@
 import 'package:fixnum/fixnum.dart';
 import 'package:go_router/go_router.dart';
 import 'package:karmachain_dash/common_libs.dart';
+import 'package:karmachain_dash/ui/screens/account_screen.dart';
 import 'package:karmachain_dash/ui/screens/block_screen.dart';
 import 'package:karmachain_dash/ui/screens/blocks_screen.dart';
 import 'package:karmachain_dash/ui/screens/karmachain.dart';
@@ -12,7 +13,6 @@ class ScreenPaths {
   static String home = '/';
   static String blocks = '/blocks';
   static String txDetails = '/tx/:txId';
-  static String userTxs = '/user/:accountId/txs';
   static String user = '/user/:accountId';
   static String block = '/block/:blockHeight';
 }
@@ -22,7 +22,6 @@ class ScreenNames {
   static String home = 'home';
   static String blocks = 'blocks';
   static String txDetails = 'txDetials';
-  static String userTxs = 'userTransactions';
   static String user = 'user';
   static String block = 'block';
 }
@@ -88,5 +87,16 @@ final GoRouter appRouter = GoRouter(
 
             return BlockScreen(
                 blockHeight: blockHeight, title: 'Block $blockId');
+          }),
+      GoRoute(
+          name: ScreenNames.user,
+          path: ScreenPaths.user,
+          builder: (BuildContext context, GoRouterState state) {
+            String? accountId = state.params['accountId'];
+            if (accountId == null) {
+              // todo: redirect to home screen
+            }
+
+            return AccountScreen(accountId: accountId);
           }),
     ]);

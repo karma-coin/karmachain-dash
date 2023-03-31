@@ -22,8 +22,7 @@ CupertinoListTile getBlockWidget(
       if (!tapable) return;
       context.pushNamed(
         ScreenNames.block,
-        params: {'blockHeight': b.height.toString()},
-        extra: b.transactionsHashes,
+        params: {'blockHeight': b.height.toString()}       
       );
     },
     padding: const EdgeInsets.only(top: 12, bottom: 12, left: 12, right: 12),

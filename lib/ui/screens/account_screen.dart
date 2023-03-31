@@ -1,4 +1,3 @@
-import 'package:fixnum/fixnum.dart';
 import 'package:karmachain_dash/common_libs.dart';
 import 'package:karmachain_dash/data/genesis_config.dart';
 import 'package:karmachain_dash/data/kc_amounts_formatter.dart';
@@ -8,25 +7,21 @@ import 'package:karmachain_dash/data/signed_transaction.dart';
 import 'package:karmachain_dash/services/api/api.pb.dart';
 import 'package:karmachain_dash/services/api/types.pb.dart';
 import 'package:karmachain_dash/ui/helpers/widget_utils.dart';
-import 'package:karmachain_dash/ui/widgets/block_widget.dart';
 import 'package:karmachain_dash/ui/widgets/pill.dart';
 import 'package:status_alert/status_alert.dart';
-import 'package:karmachain_dash/services/api/api.pbgrpc.dart' as api_types;
 
 // Display list of transactions for provided account id or for a block
-class BlockScreen extends StatefulWidget {
-  final Int64 blockHeight;
-  final String? title;
+class AccountScreen extends StatefulWidget {
+  final String? accountId;
 
-  const BlockScreen(
-      {super.key, this.blockHeight = Int64.ONE, this.title = 'Transactions'});
+  const AccountScreen({super.key, this.accountId});
 
   @override
-  State<BlockScreen> createState() => _BlockScreenState();
+  State<AccountScreen> createState() => _AccountScreenState();
 }
 
-class _BlockScreenState extends State<BlockScreen> {
-  _BlockScreenState();
+class _AccountScreenState extends State<AccountScreen> {
+  _AccountScreenState();
 
   // we assume api is available until we know otherwise
   bool apiOffline = false;
@@ -34,7 +29,8 @@ class _BlockScreenState extends State<BlockScreen> {
   // we assume tx is null until we know otherwise
   List<SignedTransactionWithStatus>? txs;
 
-  Block? block;
+  List<int>? accountId;
+  User? user;
 
   @override
   void initState() {
@@ -42,39 +38,25 @@ class _BlockScreenState extends State<BlockScreen> {
     apiOffline = false;
 
     Future.delayed(Duration.zero, () async {
-      List<SignedTransactionWithStatus> newTxs = [];
-      Block? newBlock;
       try {
-        GetBlocksResponse blockResp = await api.apiServiceClient.getBlocks(
-            GetBlocksRequest(
-                fromBlockHeight: widget.blockHeight,
-                toBlockHeight: widget.blockHeight));
+        List<int> id = widget.accountId!.toHex();
+        GetUserInfoByAccountResponse resp = await api.apiServiceClient
+            .getUserInfoByAccount(
+                GetUserInfoByAccountRequest(accountId: AccountId(data: id)));
 
-        if (blockResp.blocks.isEmpty) {
-          throw 'Block not found';
+        if (!resp.hasUser()) {
+          throw 'User not found';
         }
 
-        newBlock = blockResp.blocks.first;
+        GetTransactionsResponse txsResp = await api.apiServiceClient
+            .getTransactions(
+                GetTransactionsRequest(accountId: AccountId(data: id)));
 
-        for (List<int> txHash in newBlock.transactionsHashes) {
-          GetBlocksResponse blockResp = await api.apiServiceClient.getBlocks(
-              GetBlocksRequest(
-                  fromBlockHeight: widget.blockHeight,
-                  toBlockHeight: widget.blockHeight));
-
-          if (blockResp.blocks.isEmpty) {
-            throw 'Block not found';
-          }
-
-          newBlock = blockResp.blocks.first;
-
-          api_types.GetTransactionResponse resp = await api.apiServiceClient
-              .getTransaction(api_types.GetTransactionRequest(txHash: txHash));
-
-          if (resp.hasTransaction()) {
-            newTxs.add(resp.transaction);
-          }
-        }
+        setState(() {
+          accountId = id;
+          user = resp.user;
+          txs = txsResp.transactions;
+        });
       } catch (e) {
         apiOffline = true;
         if (!mounted) return;
@@ -88,12 +70,6 @@ class _BlockScreenState extends State<BlockScreen> {
             maxWidth: statusAlertWidth);
         debugPrint('error getting karmachain data: $e');
       }
-
-      setState(() {
-        block = newBlock;
-        txs = newTxs;
-        //debugPrint(txs.toString());
-      });
     });
   }
 
@@ -121,7 +97,7 @@ class _BlockScreenState extends State<BlockScreen> {
       ];
     }
 
-    if (txs == null) {
+    if (user == null) {
       tiles.add(
         const CupertinoListTile.notched(
           title: Text('One sec...'),
@@ -137,32 +113,11 @@ class _BlockScreenState extends State<BlockScreen> {
       ];
     }
 
-    if (txs != null && txs!.isEmpty) {
-      tiles.add(
-        const CupertinoListTile.notched(
-          title: Text('No transactions found'),
-          leading: Icon(
-            CupertinoIcons.circle_fill,
-            color: CupertinoColors.systemRed,
-            size: 18,
-          ),
-        ),
-      );
-      return [
-        CupertinoListSection.insetGrouped(
-          children: tiles,
-        ),
-      ];
-    }
-
     List<CupertinoListSection> screenSections = [];
 
-    if (block != null) {
-      screenSections.add(
-        CupertinoListSection.insetGrouped(
-          children: [getBlockWidget(context, block!, widget.title!, false)],
-        ),
-      );
+    if (user != null) {
+      screenSections.add(_getUserSection(context));
+      screenSections.add(_getKarmaSection(context));
     }
 
     for (SignedTransactionWithStatus tx in txs!) {
@@ -175,6 +130,128 @@ class _BlockScreenState extends State<BlockScreen> {
     return screenSections;
   }
 
+  CupertinoListSection _getKarmaSection(BuildContext context) {
+    List<CupertinoListTile> tiles = [];
+
+    tiles.add(
+      CupertinoListTile.notched(
+        title: const Text('Karma Score'),
+        trailing: Text(
+          user!.karmaScore.toString(),
+          style: CupertinoTheme.of(context).textTheme.textStyle,
+        ),
+        leading: const Icon(
+          CupertinoIcons.circle,
+          size: 18,
+        ),
+      ),
+    );
+
+    // display non-commnity traits
+    for (TraitScore ts in user!.traitScores) {
+      if (ts.communityId != 0) {
+        continue;
+      }
+
+      PersonalityTrait trait = GenesisConfig.personalityTraits[ts.traitId];
+
+      String title = trait.name.toLowerCase();
+      String emoji = trait.emoji;
+
+      tiles.add(
+        CupertinoListTile.notched(
+          title: Text(
+            title,
+            style: CupertinoTheme.of(context).textTheme.textStyle,
+          ),
+          trailing: Text(ts.score.toString(),
+              style: CupertinoTheme.of(context).textTheme.textStyle),
+          leading: Text(
+            emoji,
+            style: CupertinoTheme.of(context).textTheme.textStyle.merge(
+                TextStyle(
+                    fontSize: 20,
+                    color:
+                        CupertinoTheme.of(context).textTheme.textStyle.color)),
+          ),
+        ),
+      );
+
+      // todo: add block for each community user has a score in!
+    }
+
+    return CupertinoListSection.insetGrouped(
+        header: const Text('Karma'), children: tiles);
+  }
+
+  CupertinoListSection _getUserSection(BuildContext context) {
+    List<CupertinoListTile> tiles = [];
+
+    tiles.add(
+      CupertinoListTile.notched(
+        title: const Text('User Name'),
+        trailing: Text(
+          user!.userName,
+          style: CupertinoTheme.of(context).textTheme.textStyle,
+        ),
+        leading: const Icon(
+          CupertinoIcons.person,
+          size: 24,
+        ),
+      ),
+    );
+
+    final phoneNumber = user!.mobileNumber.number.formatPhoneNumber();
+
+    tiles.add(
+      CupertinoListTile.notched(
+        title: const Text('Phone Number'),
+        trailing: Text(
+          '+$phoneNumber',
+          style: CupertinoTheme.of(context).textTheme.textStyle,
+        ),
+        leading: const Icon(
+          CupertinoIcons.person,
+          size: 24,
+        ),
+      ),
+    );
+
+    tiles.add(
+      CupertinoListTile.notched(
+        title: const Text('Account Id'),
+        trailing: Text(
+          user!.accountId.data.toHexString(),
+          style: CupertinoTheme.of(context).textTheme.textStyle,
+        ),
+        leading: const Icon(
+          CupertinoIcons.creditcard,
+          size: 18,
+        ),
+      ),
+    );
+
+    tiles.add(
+      CupertinoListTile.notched(
+        title: const Text('Balance'),
+        trailing: Text(
+          KarmaCoinAmountFormatter.format(
+            user!.balance,
+          ),
+          style: CupertinoTheme.of(context).textTheme.textStyle,
+        ),
+        leading: const Icon(
+          CupertinoIcons.money_dollar,
+          size: 18,
+        ),
+      ),
+    );
+
+    return CupertinoListSection.insetGrouped(
+        header: const Text('Account'), children: tiles);
+  }
+
+  // todo: use tx widget to return this as this is duplicated in block
   CupertinoListSection _getTxSection(SignedTransactionWithStatusEx txEx) {
     List<CupertinoListTile> tiles = [];
 
@@ -326,13 +403,13 @@ class _BlockScreenState extends State<BlockScreen> {
   build(BuildContext context) {
     return Title(
       color: CupertinoColors.black,
-      title: 'Karmachain - ${widget.title!}',
+      title: 'Karmachain - User Profile',
       child: CupertinoPageScaffold(
         child: NestedScrollView(
           headerSliverBuilder: (BuildContext context, bool innerBoxIsScrolled) {
             return <Widget>[
-              CupertinoSliverNavigationBar(
-                largeTitle: Text(widget.title!),
+              const CupertinoSliverNavigationBar(
+                largeTitle: Text('User Profile'),
               ),
             ];
           },

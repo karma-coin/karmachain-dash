@@ -158,20 +158,23 @@ class _KarmachainState extends State<Karmachain> {
 
     tiles.add(
       CupertinoListTile.notched(
-        title: const Text('Current block'),
-        leading: const FaIcon(FontAwesomeIcons.square, size: 20),
-        subtitle: Text(DateFormat().format(lastBlockTime)),
-        trailing: Text(time_ago.format(lastBlockTime),
-            style: CupertinoTheme.of(context).textTheme.textStyle),
-      ),
+          title: const Text('Last block'),
+          leading: const FaIcon(FontAwesomeIcons.square, size: 20),
+          subtitle: Text(time_ago.format(lastBlockTime)),
+          trailing: const CupertinoListTileChevron(),
+          onTap: () {
+            context.pushNamed(
+              ScreenNames.block,
+              params: {'blockHeight': chainData!.tipHeight.toString()},
+            );
+          }),
     );
 
     tiles.add(
       CupertinoListTile.notched(
           title: const Text('Blocks'),
           leading: const FaIcon(FontAwesomeIcons.link, size: 20),
-          subtitle: Text('${chainData!.tipHeight}',
-              style: CupertinoTheme.of(context).textTheme.textStyle),
+          subtitle: Text('${chainData!.tipHeight}'),
           trailing: const CupertinoListTileChevron(),
           onTap: () {
             debugPrint(chainData!.tipHeight.toString());
