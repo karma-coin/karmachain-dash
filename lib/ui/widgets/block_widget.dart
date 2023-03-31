@@ -6,7 +6,8 @@ import 'package:karmachain_dash/services/api/types.pb.dart';
 import 'package:karmachain_dash/ui/router.dart';
 import 'package:time_ago_provider/time_ago_provider.dart' as time_ago;
 
-CupertinoListTile getBlockWidget(BuildContext context, Block b, String title) {
+CupertinoListTile getBlockWidget(
+    BuildContext context, Block b, String title, bool tapable) {
   DateTime time = DateTime.fromMillisecondsSinceEpoch(b.time.toInt());
 
   String fees = KarmaCoinAmountFormatter.format(b.fees);
@@ -18,9 +19,10 @@ CupertinoListTile getBlockWidget(BuildContext context, Block b, String title) {
 
   return CupertinoListTile.notched(
     onTap: () {
+      if (!tapable) return;
       context.pushNamed(
         ScreenNames.block,
-        params: {'blockId': b.digest.toHexString()},
+        params: {'blockHeight': b.height.toString()},
         extra: b.transactionsHashes,
       );
     },
@@ -69,7 +71,7 @@ CupertinoListTile getBlockWidget(BuildContext context, Block b, String title) {
         ],
       ),
     ),
-    trailing: const CupertinoListTileChevron(),
+    trailing: tapable ? const CupertinoListTileChevron() : Container(),
     leading: const FaIcon(FontAwesomeIcons.square, size: 20),
   );
 }

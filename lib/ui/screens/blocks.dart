@@ -2,7 +2,7 @@ import 'package:fixnum/fixnum.dart';
 import 'package:karmachain_dash/common_libs.dart';
 import 'package:karmachain_dash/services/api/types.pb.dart';
 import 'package:karmachain_dash/ui/helpers/widget_utils.dart';
-import 'package:karmachain_dash/ui/widgets/block.dart';
+import 'package:karmachain_dash/ui/widgets/block_widget.dart';
 import 'package:status_alert/status_alert.dart';
 import 'package:karmachain_dash/services/api/api.pbgrpc.dart';
 
@@ -100,7 +100,7 @@ class _BlocksState extends State<Blocks> {
     }
 
     for (Block b in blocks) {
-      tiles.add(getBlockWidget(context, b, 'Block ${b.height}'));
+      tiles.add(getBlockWidget(context, b, 'Block ${b.height}', true));
     }
 
     return [

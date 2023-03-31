@@ -1,23 +1,25 @@
+import 'package:fixnum/fixnum.dart';
 import 'package:karmachain_dash/common_libs.dart';
 import 'package:karmachain_dash/data/genesis_config.dart';
 import 'package:karmachain_dash/data/kc_amounts_formatter.dart';
 import 'package:karmachain_dash/data/personality_traits.dart';
 import 'package:karmachain_dash/data/phone_number_formatter.dart';
 import 'package:karmachain_dash/data/signed_transaction.dart';
+import 'package:karmachain_dash/services/api/api.pb.dart';
 import 'package:karmachain_dash/services/api/types.pb.dart';
 import 'package:karmachain_dash/ui/helpers/widget_utils.dart';
+import 'package:karmachain_dash/ui/widgets/block_widget.dart';
 import 'package:karmachain_dash/ui/widgets/pill.dart';
 import 'package:status_alert/status_alert.dart';
 import 'package:karmachain_dash/services/api/api.pbgrpc.dart' as api_types;
 
 // Display list of transactions for provided account id or for a block
 class BlockScreen extends StatefulWidget {
-  final List<List<int>>? txHashes;
-  final String? blockId;
+  final Int64 blockHeight;
   final String? title;
 
   const BlockScreen(
-      {super.key, this.txHashes, this.blockId, this.title = 'Transactions'});
+      {super.key, this.blockHeight = Int64.ONE, this.title = 'Transactions'});
 
   @override
   State<BlockScreen> createState() => _BlockScreenState();
@@ -32,37 +34,63 @@ class _BlockScreenState extends State<BlockScreen> {
   // we assume tx is null until we know otherwise
   List<SignedTransactionWithStatus>? txs;
 
+  Block? block;
+
   @override
   void initState() {
     super.initState();
     apiOffline = false;
 
     Future.delayed(Duration.zero, () async {
-      // get txs for hashes
       List<SignedTransactionWithStatus> newTxs = [];
-      for (List<int> txHash in widget.txHashes!) {
-        try {
+      Block? newBlock;
+      try {
+        GetBlocksResponse blockResp = await api.apiServiceClient.getBlocks(
+            GetBlocksRequest(
+                fromBlockHeight: widget.blockHeight,
+                toBlockHeight: widget.blockHeight));
+
+        if (blockResp.blocks.isEmpty) {
+          throw 'Block not found';
+        }
+
+        newBlock = blockResp.blocks.first;
+
+        for (List<int> txHash in newBlock.transactionsHashes) {
+          GetBlocksResponse blockResp = await api.apiServiceClient.getBlocks(
+              GetBlocksRequest(
+                  fromBlockHeight: widget.blockHeight,
+                  toBlockHeight: widget.blockHeight));
+
+          if (blockResp.blocks.isEmpty) {
+            throw 'Block not found';
+          }
+
+          newBlock = blockResp.blocks.first;
+
           api_types.GetTransactionResponse resp = await api.apiServiceClient
               .getTransaction(api_types.GetTransactionRequest(txHash: txHash));
 
           if (resp.hasTransaction()) {
             newTxs.add(resp.transaction);
           }
-        } catch (e) {
-          apiOffline = true;
-          if (!mounted) return;
-          StatusAlert.show(context,
-              duration: const Duration(seconds: 2),
-              title: 'Server Error',
-              subtitle: 'Please try later',
-              configuration: const IconConfiguration(
-                  icon: CupertinoIcons.exclamationmark_triangle),
-              dismissOnBackgroundTap: true,
-              maxWidth: statusAlertWidth);
-          debugPrint('error getting karmachain data: $e');
         }
+      } catch (e) {
+        apiOffline = true;
+        if (!mounted) return;
+        StatusAlert.show(context,
+            duration: const Duration(seconds: 2),
+            title: 'Server Error',
+            subtitle: 'Please try later',
+            configuration: const IconConfiguration(
+                icon: CupertinoIcons.exclamationmark_triangle),
+            dismissOnBackgroundTap: true,
+            maxWidth: statusAlertWidth);
+        debugPrint('error getting karmachain data: $e');
       }
+
       setState(() {
+        block = newBlock;
         txs = newTxs;
         //debugPrint(txs.toString());
       });
@@ -127,15 +155,24 @@ class _BlockScreenState extends State<BlockScreen> {
       ];
     }
 
-    List<CupertinoListSection> txSections = [];
+    List<CupertinoListSection> screenSections = [];
+
+    if (block != null) {
+      screenSections.add(
+        CupertinoListSection.insetGrouped(
+          children: [getBlockWidget(context, block!, widget.title!, false)],
+        ),
+      );
+    }
+
     for (SignedTransactionWithStatus tx in txs!) {
       SignedTransactionWithStatusEx txEx =
           SignedTransactionWithStatusEx(tx, null);
 
-      txSections.add(_getTxSection(txEx));
+      screenSections.add(_getTxSection(txEx));
     }
 
-    return txSections;
+    return screenSections;
   }
 
   CupertinoListSection _getTxSection(SignedTransactionWithStatusEx txEx) {

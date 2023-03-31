@@ -1,6 +1,7 @@
+import 'package:fixnum/fixnum.dart';
 import 'package:go_router/go_router.dart';
 import 'package:karmachain_dash/common_libs.dart';
-import 'package:karmachain_dash/ui/screens/block.dart';
+import 'package:karmachain_dash/ui/screens/block_screen.dart';
 import 'package:karmachain_dash/ui/screens/blocks.dart';
 import 'package:karmachain_dash/ui/screens/karmachain.dart';
 import 'package:karmachain_dash/ui/widgets/transaction.dart';
@@ -13,7 +14,7 @@ class ScreenPaths {
   static String txDetails = '/tx/:txId';
   static String userTxs = '/user/:accountId/txs';
   static String user = '/user/:accountId';
-  static String block = '/block/:blockId';
+  static String block = '/block/:blockHeight';
 }
 
 class ScreenNames {
@@ -78,16 +79,14 @@ final GoRouter appRouter = GoRouter(
           name: ScreenNames.block,
           path: ScreenPaths.block,
           builder: (BuildContext context, GoRouterState state) {
-            List<List<int>>? txHashes = state.extra as List<List<int>>?;
-
-            var blockId = state.params['blockId'];
+            var blockId = state.params['blockHeight'];
             if (blockId == null) {
               // todo: redirect to home screen
             }
 
-            String blockName = blockId!.toHex().toShortHexString();
+            Int64 blockHeight = Int64.parseInt(blockId!);
 
             return BlockScreen(
-                txHashes: txHashes, blockId: blockId, title: 'Block $blockName');
+                blockHeight: blockHeight, title: 'Block $blockId');
           }),
     ]);
