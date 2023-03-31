@@ -1,11 +1,14 @@
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:go_router/go_router.dart';
+import 'package:intl/intl.dart';
 import 'package:karmachain_dash/common_libs.dart';
-import 'package:karmachain_dash/data/data_time_extension.dart';
 import 'package:karmachain_dash/data/kc_amounts_formatter.dart';
 import 'package:karmachain_dash/services/api/types.pb.dart';
 import 'package:karmachain_dash/ui/helpers/widget_utils.dart';
+import 'package:karmachain_dash/ui/router.dart';
 import 'package:status_alert/status_alert.dart';
 import 'package:karmachain_dash/services/api/api.pbgrpc.dart';
+import 'package:time_ago_provider/time_ago_provider.dart' as time_ago;
 
 /// Display user details for provided user or for local user
 class Karmachain extends StatefulWidget {
@@ -68,7 +71,7 @@ class _KarmachainState extends State<Karmachain> {
       // todo: add loader
       tiles.add(
         const CupertinoListTile.notched(
-          title: Text('Please wait...'),
+          title: Text('One sec...'),
           leading: Icon(CupertinoIcons.clock),
           trailing: CupertinoActivityIndicator(),
           // todo: number format
@@ -130,17 +133,19 @@ class _KarmachainState extends State<Karmachain> {
               style: CupertinoTheme.of(context).textTheme.textStyle)),
     );
 
-    DateTime genesisTime = DateTime.fromMillisecondsSinceEpoch(
-        genesisData!.genesisTime.toInt() * 1000);
+    //DateTime genesisTime = DateTime.fromMillisecondsSinceEpoch(
+    //     genesisData!.genesisTime.toInt() * 1000);
 
-    //String dateDisp = DateFormat().format(genesis_time);
+    DateTime genesisTime = DateTime.fromMillisecondsSinceEpoch(1678426699000);
+
+    debugPrint('Genesis time: $genesisTime');
 
     tiles.add(
       CupertinoListTile.notched(
         title: const Text('Genesis'),
         leading: const Icon(CupertinoIcons.clock),
-        //subtitle: Text(dateDisp),
-        trailing: Text(genesisTime.toTimeAgo(),
+        subtitle: Text(DateFormat().format(genesisTime)),
+        trailing: Text(time_ago.format(genesisTime),
             style: CupertinoTheme.of(context).textTheme.textStyle),
         // todo: number format
       ),
@@ -153,20 +158,28 @@ class _KarmachainState extends State<Karmachain> {
 
     tiles.add(
       CupertinoListTile.notched(
-        title: const Text('Blocks'),
-        leading: const FaIcon(FontAwesomeIcons.link, size: 20),
-        trailing: Text('${chainData!.tipHeight}',
-            style: CupertinoTheme.of(context).textTheme.textStyle),
-      ),
+          title: const Text('Last block'),
+          leading: const FaIcon(FontAwesomeIcons.square, size: 20),
+          subtitle: Text(time_ago.format(lastBlockTime)),
+          trailing: const CupertinoListTileChevron(),
+          onTap: () {
+            context.pushNamed(
+              ScreenNames.block,
+              params: {'blockHeight': chainData!.tipHeight.toString()},
+            );
+          }),
     );
 
     tiles.add(
       CupertinoListTile.notched(
-        title: const Text('Current block'),
-        leading: const FaIcon(FontAwesomeIcons.square, size: 20),
-        trailing: Text(lastBlockTime.toTimeAgo(),
-            style: CupertinoTheme.of(context).textTheme.textStyle),
-      ),
+          title: const Text('Blocks'),
+          leading: const FaIcon(FontAwesomeIcons.link, size: 20),
+          subtitle: Text('${chainData!.tipHeight}'),
+          trailing: const CupertinoListTileChevron(),
+          onTap: () {
+            debugPrint(chainData!.tipHeight.toString());
+            context.push(ScreenPaths.blocks);
+          }),
     );
 
     tiles.add(
@@ -349,7 +362,7 @@ class _KarmachainState extends State<Karmachain> {
   build(BuildContext context) {
     return Title(
       color: CupertinoColors.black, // This is required
-      title: 'Karma Coin - Karmachain',
+      title: 'Karmachain Dashboard',
       child: CupertinoPageScaffold(
         child: NestedScrollView(
           headerSliverBuilder: (BuildContext context, bool innerBoxIsScrolled) {

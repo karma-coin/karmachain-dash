@@ -53,5 +53,4 @@ class SettingsLogic {
       'a885bf7ac670b0f01a3551740020e115641005a93f59472002bfd1dc665f4a4e');
   // requested user name entered by the user. For the canonical user-name, check AccountLogic
 
-  // final bool useBlurs = !PlatformInfo.isAndroid;
 }

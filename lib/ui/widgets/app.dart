@@ -11,8 +11,7 @@ class KarmachainDashboard extends StatelessWidget with GetItMixin {
 
   @override
   Widget build(BuildContext context) {
-    debugPrint('KarmachainDash App build');
-
+  
     // limit orientations to portrait up and down.
     SystemChrome.setPreferredOrientations(
         [DeviceOrientation.portraitUp, DeviceOrientation.portraitDown]);

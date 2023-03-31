@@ -1,17 +1,29 @@
+import 'package:fixnum/fixnum.dart';
 import 'package:go_router/go_router.dart';
 import 'package:karmachain_dash/common_libs.dart';
+import 'package:karmachain_dash/ui/screens/account_screen.dart';
+import 'package:karmachain_dash/ui/screens/block_screen.dart';
+import 'package:karmachain_dash/ui/screens/blocks_screen.dart';
 import 'package:karmachain_dash/ui/screens/karmachain.dart';
+import 'package:karmachain_dash/ui/widgets/transaction.dart';
 
 /// Shared paths / urls used across the app
 class ScreenPaths {
   /// Guest home screen (playground for now)
-  static String welcome = '/';
+  static String home = '/';
+  static String blocks = '/blocks';
+  static String txDetails = '/tx/:txId';
+  static String user = '/user/:accountId';
+  static String block = '/block/:blockHeight';
 }
 
-/// Shared screen names across the app
 class ScreenNames {
   /// Guest home screen (playground for now)
-  static String welcome = 'welcome';
+  static String home = 'home';
+  static String blocks = 'blocks';
+  static String txDetails = 'txDetials';
+  static String user = 'user';
+  static String block = 'block';
 }
 
 popUntil(String path) {
@@ -32,7 +44,7 @@ void pushNamedAndRemoveUntil(String path) {
 }
 
 String _getInitialLocation() {
-  return ScreenPaths.welcome;
+  return ScreenPaths.home;
 }
 
 /// The route configuration
@@ -43,10 +55,48 @@ final GoRouter appRouter = GoRouter(
     initialLocation: _getInitialLocation(),
     routes: <RouteBase>[
       GoRoute(
-          // Initial app screen (playground for now)
-          name: ScreenNames.welcome,
-          path: ScreenPaths.welcome,
+          path: ScreenPaths.home,
           builder: (BuildContext context, GoRouterState state) {
-            return const Karmachain(); //WelcomeScreen(title: 'Karma Coin');
+            return const Karmachain();
+          }),
+      GoRoute(
+          path: ScreenPaths.blocks,
+          builder: (BuildContext context, GoRouterState state) {
+            return const Blocks();
+          }),
+      GoRoute(
+          path: ScreenPaths.txDetails,
+          builder: (BuildContext context, GoRouterState state) {
+            var txId = state.params['txId'];
+            if (txId == null) {
+              // todo: redirect to home screen
+            }
+
+            return Transaction(key: Key(txId!), txHash: txId.toHex());
+          }),
+      GoRoute(
+          name: ScreenNames.block,
+          path: ScreenPaths.block,
+          builder: (BuildContext context, GoRouterState state) {
+            var blockId = state.params['blockHeight'];
+            if (blockId == null) {
+              // todo: redirect to home screen
+            }
+
+            Int64 blockHeight = Int64.parseInt(blockId!);
+
+            return BlockScreen(
+                blockHeight: blockHeight, title: 'Block $blockId');
+          }),
+      GoRoute(
+          name: ScreenNames.user,
+          path: ScreenPaths.user,
+          builder: (BuildContext context, GoRouterState state) {
+            String? accountId = state.params['accountId'];
+            if (accountId == null) {
+              // todo: redirect to home screen
+            }
+
+            return AccountScreen(accountId: accountId);
           }),
     ]);
