@@ -201,6 +201,8 @@ class _AccountScreenState extends State<AccountScreen> {
       ),
     );
 
+    // todo: add time of signup based on signup transaction time stamp
+
     final phoneNumber = user!.mobileNumber.number.formatPhoneNumber();
 
     tiles.add(
@@ -211,7 +213,7 @@ class _AccountScreenState extends State<AccountScreen> {
           style: CupertinoTheme.of(context).textTheme.textStyle,
         ),
         leading: const Icon(
-          CupertinoIcons.person,
+          CupertinoIcons.phone,
           size: 24,
         ),
       ),
@@ -220,13 +222,18 @@ class _AccountScreenState extends State<AccountScreen> {
     tiles.add(
       CupertinoListTile.notched(
         title: const Text('Account Id'),
-        trailing: Text(
-          user!.accountId.data.toHexString(),
-          style: CupertinoTheme.of(context).textTheme.textStyle,
+        trailing: Expanded(
+          child: Text(
+            textAlign: TextAlign.right,
+            overflow: TextOverflow.ellipsis,
+            maxLines: 4,
+            user!.accountId.data.toHexString(),
+            style: CupertinoTheme.of(context).textTheme.textStyle,
+          ),
         ),
         leading: const Icon(
           CupertinoIcons.creditcard,
-          size: 18,
+          size: 24,
         ),
       ),
     );
@@ -242,7 +249,7 @@ class _AccountScreenState extends State<AccountScreen> {
         ),
         leading: const Icon(
           CupertinoIcons.money_dollar,
-          size: 18,
+          size: 24,
         ),
       ),
     );
