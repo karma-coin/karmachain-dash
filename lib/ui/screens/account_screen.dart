@@ -343,52 +343,61 @@ class _AccountScreenState extends State<AccountScreen> {
     }
 
     // from
-    tiles.add(
-      CupertinoListTile.notched(
-          title: Text('From',
-              style: CupertinoTheme.of(context).textTheme.textStyle),
-          subtitle: Column(
-            mainAxisAlignment: MainAxisAlignment.start,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(fromUser.userName),
-              Text(fromUser.accountId.data.toShortHexString()),
-              const SizedBox(height: 6),
-            ],
-          ),
-          trailing: Text('+$fromUserPhoneNumber',
-              style: CupertinoTheme.of(context).textTheme.textStyle),
-          leading: const Icon(CupertinoIcons.arrow_right, size: 28),
-          onTap: () {
-            if (incoming) {
-              context.pushNamed(ScreenNames.user,
-                  params: {'accountId': fromUser.accountId.data.toHexString()});
-            }
-          }),
-    );
+    if (incoming) {
+      tiles.add(
+        CupertinoListTile.notched(
+            title: Text('From',
+                style: CupertinoTheme.of(context).textTheme.textStyle),
+            subtitle: Column(
+              mainAxisAlignment: MainAxisAlignment.start,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(fromUser.userName),
+                Text(fromUser.accountId.data.toShortHexString()),
+                const SizedBox(height: 6),
+              ],
+            ),
+            trailing: Text('+$fromUserPhoneNumber',
+                style: CupertinoTheme.of(context).textTheme.textStyle),
+            leading: const Icon(CupertinoIcons.arrow_right, size: 28),
+            onTap: () {
+              if (incoming) {
+                context.pushNamed(ScreenNames.user, params: {
+                  'accountId': fromUser.accountId.data.toHexString()
+                });
+              }
+            }),
+      );
+    }
 
     if (paymentData != null) {
       final User toUser = txEx.getToUser()!;
       final toUserPhoneNumber = toUser.mobileNumber.number.formatPhoneNumber();
 
-      tiles.add(
-        CupertinoListTile.notched(
-          title:
-              Text('To', style: CupertinoTheme.of(context).textTheme.textStyle),
-          subtitle: Column(
-            mainAxisAlignment: MainAxisAlignment.start,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(toUser.userName),
-              Text(toUser.accountId.data.toShortHexString()),
-              const SizedBox(height: 6),
-            ],
+      if (!incoming) {
+        tiles.add(
+          CupertinoListTile.notched(
+            title: Text('To',
+                style: CupertinoTheme.of(context).textTheme.textStyle),
+            subtitle: Column(
+              mainAxisAlignment: MainAxisAlignment.start,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(toUser.userName),
+                Text(toUser.accountId.data.toShortHexString()),
+                const SizedBox(height: 6),
+              ],
+            ),
+            trailing: Text('+$toUserPhoneNumber',
+                style: CupertinoTheme.of(context).textTheme.textStyle),
+            leading: const Icon(CupertinoIcons.arrow_left, size: 28),
+            onTap: () {
+              context.pushNamed(ScreenNames.user,
+                  params: {'accountId': toUser.accountId.data.toHexString()});
+            },
           ),
-          trailing: Text('+$toUserPhoneNumber',
-              style: CupertinoTheme.of(context).textTheme.textStyle),
-          leading: const Icon(CupertinoIcons.arrow_left, size: 28),
-        ),
-      );
+        );
+      }
     }
 
     // status
