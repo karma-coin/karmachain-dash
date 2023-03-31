@@ -40,7 +40,7 @@ class PlatformInfo {
       (await isConnected()) == false;
 
   static Future<bool> isRunningOnAndroidEmulator() async {
-    if (!isAndroid) {
+    if (!isAndroid || kIsWeb) {
       return false;
     }
     DeviceInfoPlugin deviceInfo = DeviceInfoPlugin();

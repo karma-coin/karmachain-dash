@@ -97,7 +97,7 @@ class _TransactionState extends State<Transaction> {
     if (!apiOffline && txFound && tx == null) {
       tiles.add(
         const CupertinoListTile.notched(
-          title: Text('Please wait...'),
+          title: Text('One sec...'),
           leading: Icon(CupertinoIcons.clock),
           trailing: CupertinoActivityIndicator(),
           // todo: number format

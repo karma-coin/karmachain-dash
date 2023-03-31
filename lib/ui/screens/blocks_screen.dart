@@ -66,7 +66,7 @@ class _BlocksState extends State<Blocks> {
     if (!apiOffline && blocks.isEmpty) {
       tiles.add(
         const CupertinoListTile.notched(
-          title: Text('Please wait...'),
+          title: Text('One sec...'),
           leading: Icon(CupertinoIcons.clock),
           trailing: CupertinoActivityIndicator(),
           // todo: number format
@@ -127,11 +127,13 @@ class _BlocksState extends State<Blocks> {
           body: MediaQuery.removePadding(
             context: context,
             removeTop: false,
-            child: ListView(
-                padding: EdgeInsets.zero,
-                shrinkWrap: true,
-                primary: true,
-                children: _getSections(context)),
+            child: SafeArea(
+              child: ListView(
+                  padding: EdgeInsets.zero,
+                  shrinkWrap: true,
+                  primary: true,
+                  children: _getSections(context)),
+            ),
           ),
         ),
       ),

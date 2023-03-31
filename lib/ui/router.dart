@@ -2,7 +2,7 @@ import 'package:fixnum/fixnum.dart';
 import 'package:go_router/go_router.dart';
 import 'package:karmachain_dash/common_libs.dart';
 import 'package:karmachain_dash/ui/screens/block_screen.dart';
-import 'package:karmachain_dash/ui/screens/blocks.dart';
+import 'package:karmachain_dash/ui/screens/blocks_screen.dart';
 import 'package:karmachain_dash/ui/screens/karmachain.dart';
 import 'package:karmachain_dash/ui/widgets/transaction.dart';
 
