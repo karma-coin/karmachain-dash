@@ -37,8 +37,8 @@ class GenesisConfig {
 
   /// todo: move to community manager - not part og genesis config
   static final Map<int, CommunityDesignTheme> communityColors = {
-    1: CommunityDesignTheme(
-        const Color.fromARGB(255, 183, 66, 179), const Color.fromARGB(255, 255, 255, 255)),
+    1: CommunityDesignTheme(const Color.fromARGB(255, 183, 66, 179),
+        const Color.fromARGB(255, 255, 255, 255)),
   };
 
   static final Map<int, String> communityTileAssets = {
@@ -65,7 +65,7 @@ class GenesisConfig {
         id: 1,
         name: 'Grateful Giraffes',
         desc:
-            'A global community of oleaders that come together for powerful wellness experiences',
+            'A global community of leaders that come together for powerful wellness experiences',
         emoji: '🦒',
         websiteUrl: 'https://www.gratefulgiraffes.com',
         twitterUrl: 'https://twitter.com/TheGratefulDAO',
@@ -156,5 +156,6 @@ class GenesisConfig {
     PersonalityTrait(59, 'a Dynamo', '🚀'),
     PersonalityTrait(60, 'an Imaginative Motivator', '🌻'),
     PersonalityTrait(61, 'a Campaigner', '📣'),
+    PersonalityTrait(62, 'A Karma Rewwards Winner', '🏆'),
   ];
 }
