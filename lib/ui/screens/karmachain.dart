@@ -187,8 +187,8 @@ class _KarmachainState extends State<Karmachain> {
       CupertinoListTile.notched(
         title: const Text('Users'),
         leading: const Icon(CupertinoIcons.person_2),
-        trailing: Text(chainData!.usersCount.toString(),
-            style: CupertinoTheme.of(context).textTheme.textStyle),
+        subtitle: Text(chainData!.usersCount.toString()),
+        trailing: const CupertinoListTileChevron(),
         onTap: () {
           context.push(ScreenPaths.users);
         },
