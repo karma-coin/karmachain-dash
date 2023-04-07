@@ -200,7 +200,7 @@ class _KarmachainState extends State<Karmachain> {
       CupertinoListTile.notched(
           title: const Text('Karma Rewards'),
           leading: const FaIcon(FontAwesomeIcons.link, size: 20),
-          subtitle: const Text('leaderboard'),
+          subtitle: const Text('Leaderboard'),
           trailing: const CupertinoListTileChevron(),
           onTap: () {
             debugPrint(chainData!.tipHeight.toString());
