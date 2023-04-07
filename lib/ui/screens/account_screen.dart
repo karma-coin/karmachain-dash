@@ -304,21 +304,25 @@ class _AccountScreenState extends State<AccountScreen> {
 
     // todo: add time of signup based on signup transaction time stamp
 
-    final phoneNumber = user!.mobileNumber.number.formatPhoneNumber();
+    String? phoneNumber = user!.hasMobileNumber()
+        ? '+${user!.mobileNumber.number.formatPhoneNumber()}'
+        : null;
 
-    tiles.add(
-      CupertinoListTile.notched(
-        title: const Text('Phone Number'),
-        trailing: Text(
-          '+$phoneNumber',
-          style: CupertinoTheme.of(context).textTheme.textStyle,
+    if (phoneNumber != null) {
+      tiles.add(
+        CupertinoListTile.notched(
+          title: const Text('Phone Number'),
+          trailing: Text(
+            phoneNumber,
+            style: CupertinoTheme.of(context).textTheme.textStyle,
+          ),
+          leading: const Icon(
+            CupertinoIcons.phone,
+            size: 24,
+          ),
         ),
-        leading: const Icon(
-          CupertinoIcons.phone,
-          size: 24,
-        ),
-      ),
-    );
+      );
+    }
 
     tiles.add(
       CupertinoListTile.notched(

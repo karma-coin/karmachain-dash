@@ -189,7 +189,9 @@ class _KarmachainState extends State<Karmachain> {
         leading: const Icon(CupertinoIcons.person_2),
         trailing: Text(chainData!.usersCount.toString(),
             style: CupertinoTheme.of(context).textTheme.textStyle),
-        // todo: number format
+        onTap: () {
+          context.push(ScreenPaths.users);
+        },
       ),
     );
 

@@ -5,6 +5,7 @@ import 'package:karmachain_dash/ui/screens/account_screen.dart';
 import 'package:karmachain_dash/ui/screens/block_screen.dart';
 import 'package:karmachain_dash/ui/screens/blocks_screen.dart';
 import 'package:karmachain_dash/ui/screens/karmachain.dart';
+import 'package:karmachain_dash/ui/screens/users_screen.dart';
 import 'package:karmachain_dash/ui/widgets/transaction.dart';
 
 /// Shared paths / urls used across the app
@@ -14,6 +15,7 @@ class ScreenPaths {
   static String blocks = '/blocks';
   static String txDetails = '/tx/:txId';
   static String user = '/user/:accountId';
+  static String users = '/users';
   static String block = '/block/:blockHeight';
 }
 
@@ -23,6 +25,7 @@ class ScreenNames {
   static String blocks = 'blocks';
   static String txDetails = 'txDetials';
   static String user = 'user';
+  static String users = 'users';
   static String block = 'block';
 }
 
@@ -63,6 +66,11 @@ final GoRouter appRouter = GoRouter(
           path: ScreenPaths.blocks,
           builder: (BuildContext context, GoRouterState state) {
             return const Blocks();
+          }),
+      GoRoute(
+          path: ScreenPaths.users,
+          builder: (BuildContext context, GoRouterState state) {
+            return const Users();
           }),
       GoRoute(
           path: ScreenPaths.txDetails,
