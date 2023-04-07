@@ -32,6 +32,7 @@ class _KarmachainState extends State<Karmachain> {
   @override
   void initState() {
     super.initState();
+
     apiOffline = false;
 
     Future.delayed(Duration.zero, () async {
