@@ -5,6 +5,7 @@ import 'package:karmachain_dash/ui/screens/account_screen.dart';
 import 'package:karmachain_dash/ui/screens/block_screen.dart';
 import 'package:karmachain_dash/ui/screens/blocks_screen.dart';
 import 'package:karmachain_dash/ui/screens/karmachain.dart';
+import 'package:karmachain_dash/ui/screens/leader_board.dart';
 import 'package:karmachain_dash/ui/screens/users_screen.dart';
 import 'package:karmachain_dash/ui/widgets/transaction.dart';
 
@@ -16,6 +17,7 @@ class ScreenPaths {
   static String txDetails = '/tx/:txId';
   static String user = '/user/:accountId';
   static String users = '/users';
+  static String leaderboard = '/karma-rewards';
   static String block = '/block/:blockHeight';
 }
 
@@ -26,6 +28,7 @@ class ScreenNames {
   static String txDetails = 'txDetials';
   static String user = 'user';
   static String users = 'users';
+  static String leaderboard = 'leaderBoard';
   static String block = 'block';
 }
 
@@ -68,10 +71,17 @@ final GoRouter appRouter = GoRouter(
             return const Blocks();
           }),
       GoRoute(
+          path: ScreenPaths.leaderboard,
+          name: ScreenNames.leaderboard,
+          builder: (BuildContext context, GoRouterState state) {
+            return const LeaderboardScreen();
+          }),
+      GoRoute(
           path: ScreenPaths.users,
           builder: (BuildContext context, GoRouterState state) {
             return const Users();
           }),
+      /* not functional yet
       GoRoute(
           path: ScreenPaths.txDetails,
           builder: (BuildContext context, GoRouterState state) {
@@ -82,6 +92,7 @@ final GoRouter appRouter = GoRouter(
 
             return Transaction(key: Key(txId!), txHash: txId.toHex());
           }),
+          */
       GoRoute(
           name: ScreenNames.block,
           path: ScreenPaths.block,

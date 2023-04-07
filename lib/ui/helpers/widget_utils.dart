@@ -6,6 +6,12 @@ import 'package:url_launcher/url_launcher.dart';
 
 const statusAlertWidth = 270.0;
 
+const kcPurple = Color.fromARGB(255, 88, 40, 138);
+const kcOrange = Color.fromARGB(255, 255, 184, 0);
+const kcNavBarBorder = Border(
+  bottom: BorderSide(color: kcOrange, width: 2),
+);
+
 Future<bool> openUrl(String url) async {
   if (!await PlatformInfo.isConnected()) {
     return false;

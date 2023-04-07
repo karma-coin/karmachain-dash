@@ -1,3 +1,4 @@
+import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:karmachain_dash/common_libs.dart';
 import 'package:karmachain_dash/data/genesis_config.dart';
@@ -554,8 +555,21 @@ class _AccountScreenState extends State<AccountScreen> {
           headerSliverBuilder: (BuildContext context, bool innerBoxIsScrolled) {
             return <Widget>[
               CupertinoSliverNavigationBar(
-                largeTitle: Text(header),
-              ),
+                  largeTitle: Text(
+                    header,
+                    style: CupertinoTheme.of(context)
+                        .textTheme
+                        .navLargeTitleTextStyle
+                        .merge(
+                          const TextStyle(
+                            color: Colors.white,
+                            fontSize: 30,
+                            fontWeight: FontWeight.w400,
+                          ),
+                        ),
+                  ),
+                  backgroundColor: kcPurple,
+                  border: kcNavBarBorder),
             ];
           },
           body: MediaQuery.removePadding(

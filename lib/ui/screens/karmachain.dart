@@ -1,3 +1,4 @@
+import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
@@ -197,6 +198,18 @@ class _KarmachainState extends State<Karmachain> {
 
     tiles.add(
       CupertinoListTile.notched(
+          title: const Text('Karma Rewards'),
+          leading: const FaIcon(FontAwesomeIcons.link, size: 20),
+          subtitle: const Text('leaderboard'),
+          trailing: const CupertinoListTileChevron(),
+          onTap: () {
+            debugPrint(chainData!.tipHeight.toString());
+            context.push(ScreenPaths.leaderboard);
+          }),
+    );
+
+    tiles.add(
+      CupertinoListTile.notched(
         title: const Text('Transactions'),
         leading: const Icon(CupertinoIcons.doc),
         trailing: Text(chainData!.transactionsCount.toString(),
@@ -365,13 +378,27 @@ class _KarmachainState extends State<Karmachain> {
   build(BuildContext context) {
     return Title(
       color: CupertinoColors.black, // This is required
-      title: 'Karmachain Dashboard',
+      title: '☥ Karmachain Dashboard',
       child: CupertinoPageScaffold(
         child: NestedScrollView(
           headerSliverBuilder: (BuildContext context, bool innerBoxIsScrolled) {
             return <Widget>[
-              const CupertinoSliverNavigationBar(
-                largeTitle: Text('Karmachain Status'),
+              CupertinoSliverNavigationBar(
+                largeTitle: Text(
+                  'Karmachain',
+                  style: CupertinoTheme.of(context)
+                      .textTheme
+                      .navLargeTitleTextStyle
+                      .merge(
+                        const TextStyle(
+                          color: Colors.white,
+                          fontSize: 30,
+                          fontWeight: FontWeight.w400,
+                        ),
+                      ),
+                ),
+                backgroundColor: kcPurple,
+                border: kcNavBarBorder,
               ),
             ];
           },

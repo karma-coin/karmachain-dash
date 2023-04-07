@@ -1,3 +1,4 @@
+import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:karmachain_dash/common_libs.dart';
 import 'package:karmachain_dash/services/api/types.pb.dart';
@@ -125,9 +126,22 @@ class _UsersState extends State<Users> {
         child: NestedScrollView(
           headerSliverBuilder: (BuildContext context, bool innerBoxIsScrolled) {
             return <Widget>[
-              const CupertinoSliverNavigationBar(
-                largeTitle: Text('Karmachain Users'),
-              ),
+              CupertinoSliverNavigationBar(
+                  largeTitle: Text(
+                    'Karmachain Users',
+                    style: CupertinoTheme.of(context)
+                        .textTheme
+                        .navLargeTitleTextStyle
+                        .merge(
+                          const TextStyle(
+                            color: Colors.white,
+                            fontSize: 30,
+                            fontWeight: FontWeight.w400,
+                          ),
+                        ),
+                  ),
+                  backgroundColor: kcPurple,
+                  border: kcNavBarBorder),
             ];
           },
           body: MediaQuery.removePadding(
