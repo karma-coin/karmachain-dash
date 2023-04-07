@@ -35,6 +35,8 @@ class _AccountScreenState extends State<AccountScreen> {
   List<int>? accountId;
   User? user;
 
+  String? title;
+
   @override
   void initState() {
     super.initState();
@@ -57,6 +59,7 @@ class _AccountScreenState extends State<AccountScreen> {
 
         setState(() {
           accountId = id;
+          title = resp.user.userName;
           user = resp.user;
           txs = txsResp.transactions;
         });
@@ -121,6 +124,12 @@ class _AccountScreenState extends State<AccountScreen> {
     if (user != null) {
       screenSections.add(_getUserSection(context));
       screenSections.add(_getKarmaSection(context));
+
+      List<CupertinoListSection> communitySections =
+          _getCommunitiesSections(context);
+      if (communitySections.isNotEmpty) {
+        screenSections.addAll(communitySections);
+      }
     }
 
     for (SignedTransactionWithStatus tx in txs!) {
@@ -131,6 +140,95 @@ class _AccountScreenState extends State<AccountScreen> {
     }
 
     return screenSections;
+  }
+
+  List<CupertinoListSection> _getCommunitiesSections(BuildContext context) {
+    List<CupertinoListSection> sections = [];
+    for (CommunityMembership m in user!.communityMemberships) {
+      CupertinoListSection? section = _getCommunitySecton(context, m);
+      if (section != null) {
+        sections.add(section);
+      }
+    }
+    return sections;
+  }
+
+  CupertinoListSection? _getCommunitySecton(
+      BuildContext context, CommunityMembership m) {
+    List<CupertinoListTile> tiles = [];
+
+    Community? community = GenesisConfig.communities[m.communityId];
+
+    if (community == null) {
+      // todo: return table with error
+      return null;
+    }
+
+    tiles.add(
+      CupertinoListTile.notched(
+        title: Text(
+          community.desc,
+          style: CupertinoTheme.of(context).textTheme.textStyle,
+        ),
+        trailing: const CupertinoListTileChevron(),
+        leading: Text(
+          community.emoji,
+          style: CupertinoTheme.of(context).textTheme.textStyle.merge(
+                TextStyle(
+                    fontSize: 20,
+                    color:
+                        CupertinoTheme.of(context).textTheme.textStyle.color),
+              ),
+        ),
+        onTap: () async => {await openUrl(community.websiteUrl)},
+      ),
+    );
+
+    tiles.add(
+      CupertinoListTile.notched(
+        title: const Text('Karma Score'),
+        trailing: Text(
+          m.karmaScore.toString(),
+          style: CupertinoTheme.of(context).textTheme.textStyle,
+        ),
+        leading: const Icon(
+          CupertinoIcons.circle,
+          size: 18,
+        ),
+      ),
+    );
+
+    for (TraitScore ts in user!.traitScores) {
+      if (ts.communityId != m.communityId) {
+        continue;
+      }
+
+      PersonalityTrait trait = GenesisConfig.personalityTraits[ts.traitId];
+      String title = trait.name.toLowerCase();
+      String emoji = trait.emoji;
+
+      tiles.add(
+        CupertinoListTile.notched(
+          title: Text(
+            title,
+            style: CupertinoTheme.of(context).textTheme.textStyle,
+          ),
+          trailing: Text(ts.score.toString(),
+              style: CupertinoTheme.of(context).textTheme.textStyle),
+          leading: Text(
+            emoji,
+            style: CupertinoTheme.of(context).textTheme.textStyle.merge(
+                TextStyle(
+                    fontSize: 20,
+                    color:
+                        CupertinoTheme.of(context).textTheme.textStyle.color)),
+          ),
+        ),
+      );
+    }
+
+    return CupertinoListSection.insetGrouped(
+        header: Text('Community - ${community.name}'), children: tiles);
   }
 
   CupertinoListSection _getKarmaSection(BuildContext context) {
@@ -244,11 +342,16 @@ class _AccountScreenState extends State<AccountScreen> {
     tiles.add(
       CupertinoListTile.notched(
         title: const Text('Balance'),
-        trailing: Text(
-          KarmaCoinAmountFormatter.format(
-            user!.balance,
+        trailing: Expanded(
+          child: Text(
+            KarmaCoinAmountFormatter.format(
+              user!.balance,
+            ),
+            textAlign: TextAlign.right,
+            overflow: TextOverflow.ellipsis,
+            maxLines: 4,
+            style: CupertinoTheme.of(context).textTheme.textStyle,
           ),
-          style: CupertinoTheme.of(context).textTheme.textStyle,
         ),
         leading: const Icon(
           CupertinoIcons.money_dollar,
@@ -438,15 +541,16 @@ class _AccountScreenState extends State<AccountScreen> {
 
   @override
   build(BuildContext context) {
+    String header = title != null ? 'User Profile - $title' : 'User Profile';
     return Title(
       color: CupertinoColors.black,
-      title: 'Karmachain - User Profile',
+      title: 'Karmachain - $header',
       child: CupertinoPageScaffold(
         child: NestedScrollView(
           headerSliverBuilder: (BuildContext context, bool innerBoxIsScrolled) {
             return <Widget>[
-              const CupertinoSliverNavigationBar(
-                largeTitle: Text('User Profile'),
+              CupertinoSliverNavigationBar(
+                largeTitle: Text(header),
               ),
             ];
           },

@@ -203,6 +203,31 @@ class _BlockScreenState extends State<BlockScreen> {
         String title = 'You are ${trait.name.toLowerCase()}';
         String emoji = trait.emoji;
 
+        if (paymentData.communityId != 0) {
+          Community? community =
+              GenesisConfig.communities[paymentData.communityId];
+          if (community != null) {
+            tiles.add(
+              CupertinoListTile.notched(
+                title: Text(
+                  'Community - ${community.name}',
+                  style: CupertinoTheme.of(context).textTheme.textStyle,
+                ),
+                leading: Text(
+                  community.emoji,
+                  style: CupertinoTheme.of(context).textTheme.textStyle.merge(
+                      TextStyle(
+                          fontSize: 20,
+                          color: CupertinoTheme.of(context)
+                              .textTheme
+                              .textStyle
+                              .color)),
+                ),
+              ),
+            );
+          }
+        }
+
         tiles.add(
           CupertinoListTile.notched(
             title: Text(
