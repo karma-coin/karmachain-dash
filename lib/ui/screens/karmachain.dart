@@ -131,7 +131,7 @@ class _KarmachainState extends State<Karmachain> {
       CupertinoListTile.notched(
           title: const Text('Network'),
           leading: const FaIcon(FontAwesomeIcons.networkWired, size: 20),
-          trailing: Text('Testnet 1 (NetId ${genesisData!.genesisData.netId})',
+          trailing: Text('Mainnet (NetId ${genesisData!.genesisData.netId})',
               style: CupertinoTheme.of(context).textTheme.textStyle)),
     );
 
