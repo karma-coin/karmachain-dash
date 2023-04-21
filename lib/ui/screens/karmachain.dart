@@ -135,10 +135,8 @@ class _KarmachainState extends State<Karmachain> {
               style: CupertinoTheme.of(context).textTheme.textStyle)),
     );
 
-    //DateTime genesisTime = DateTime.fromMillisecondsSinceEpoch(
-    //     genesisData!.genesisTime.toInt() * 1000);
-
-    DateTime genesisTime = DateTime.fromMillisecondsSinceEpoch(1678426699000);
+    DateTime genesisTime = DateTime.fromMillisecondsSinceEpoch(
+        genesisData!.genesisData.genesisTime.toInt() * 1000);
 
     debugPrint('Genesis time: $genesisTime');
 
