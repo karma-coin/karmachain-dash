@@ -137,8 +137,16 @@ class SignedTransactionWithStatusEx {
   }
 
   /// Returns the from user which with accountId identical to signer account id
-  User getFromUser() {
-    return txWithStatus.from;
+  User? getFromUser() {
+    if (txWithStatus.hasFrom()) {
+      return txWithStatus.from;
+    } else {
+      return null;
+    }
+  }
+
+  List<int> getFromUserAccountId() {
+    return txWithStatus.transaction.signer.data;
   }
 
   String getTimesAgo() {

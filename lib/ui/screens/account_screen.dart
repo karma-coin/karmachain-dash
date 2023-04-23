@@ -54,9 +54,13 @@ class _AccountScreenState extends State<AccountScreen> {
           throw 'User not found';
         }
 
+        debugPrint(resp.user.toString());
+
         GetTransactionsResponse txsResp = await api.apiServiceClient
             .getTransactions(
                 GetTransactionsRequest(accountId: AccountId(data: id)));
+
+        debugPrint('user txs: ${txsResp.transactions.toString()}');
 
         setState(() {
           accountId = id;
@@ -375,12 +379,13 @@ class _AccountScreenState extends State<AccountScreen> {
 
     PaymentTransactionV1? paymentData = txEx.getPaymentData();
 
-    final User fromUser = txEx.getFromUser();
-    final fromUserPhoneNumber =
-        fromUser.mobileNumber.number.formatPhoneNumber();
+    final User? fromUser = txEx.getFromUser();
+    final fromUserPhoneNumber = fromUser != null
+        ? '+${fromUser.mobileNumber.number.formatPhoneNumber()}'
+        : "n/a";
 
     bool incoming = true;
-    if (listsEqual(fromUser.accountId.data, user!.accountId.data)) {
+    if (listsEqual(fromUser?.accountId.data, user!.accountId.data)) {
       incoming = false;
     }
 
@@ -450,37 +455,49 @@ class _AccountScreenState extends State<AccountScreen> {
       }
     }
 
+    String fromUserName = fromUser?.userName ?? "n/a";
+    String fromUserAccountId = txEx.getFromUserAccountId().toShortHexString();
+
     // from
     if (incoming) {
       tiles.add(
         CupertinoListTile.notched(
-            title: Text('From',
-                style: CupertinoTheme.of(context).textTheme.textStyle),
-            subtitle: Column(
-              mainAxisAlignment: MainAxisAlignment.start,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(fromUser.userName),
-                Text(fromUser.accountId.data.toShortHexString()),
-                const SizedBox(height: 6),
-              ],
-            ),
-            trailing: Text('+$fromUserPhoneNumber',
-                style: CupertinoTheme.of(context).textTheme.textStyle),
-            leading: const Icon(CupertinoIcons.arrow_right, size: 28),
-            onTap: () {
-              if (incoming) {
-                context.pushNamed(ScreenNames.user, params: {
-                  'accountId': fromUser.accountId.data.toHexString()
-                });
-              }
-            }),
+          title: Text('From',
+              style: CupertinoTheme.of(context).textTheme.textStyle),
+          subtitle: Column(
+            mainAxisAlignment: MainAxisAlignment.start,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(fromUserName),
+              Text(fromUserAccountId),
+              const SizedBox(height: 6),
+            ],
+          ),
+          trailing: Text(fromUserPhoneNumber,
+              style: CupertinoTheme.of(context).textTheme.textStyle),
+          leading: const Icon(CupertinoIcons.arrow_right, size: 28),
+          onTap: (fromUser != null && incoming)
+              ? () {
+                  context.pushNamed(ScreenNames.user, params: {
+                    'accountId': txEx.getFromUserAccountId().toHexString(),
+                  });
+                }
+              : null,
+        ),
       );
     }
 
     if (paymentData != null) {
-      final User toUser = txEx.getToUser()!;
-      final toUserPhoneNumber = toUser.mobileNumber.number.formatPhoneNumber();
+      final User? toUser = txEx.getToUser();
+      final toUserName = toUser?.userName ?? "n/a";
+      final toUserAccountId =
+          toUser?.accountId.data.toShortHexString() ?? "n/a";
+
+      final toUserPhoneNumber = toUser != null &&
+              toUser.hasMobileNumber() &&
+              toUser.mobileNumber.number.isNotEmpty
+          ? '+${toUser.mobileNumber.number.formatPhoneNumber()}'
+          : "n/a";
 
       if (!incoming) {
         tiles.add(
@@ -491,18 +508,21 @@ class _AccountScreenState extends State<AccountScreen> {
               mainAxisAlignment: MainAxisAlignment.start,
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(toUser.userName),
-                Text(toUser.accountId.data.toShortHexString()),
+                Text(toUserName),
+                Text(toUserAccountId),
                 const SizedBox(height: 6),
               ],
             ),
             trailing: Text('+$toUserPhoneNumber',
                 style: CupertinoTheme.of(context).textTheme.textStyle),
             leading: const Icon(CupertinoIcons.arrow_left, size: 28),
-            onTap: () {
-              context.pushNamed(ScreenNames.user,
-                  params: {'accountId': toUser.accountId.data.toHexString()});
-            },
+            onTap: toUser != null
+                ? () {
+                    context.pushNamed(ScreenNames.user, params: {
+                      'accountId': toUser.accountId.data.toHexString()
+                    });
+                  }
+                : null,
           ),
         );
       }

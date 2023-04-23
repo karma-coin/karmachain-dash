@@ -32,6 +32,7 @@ class _UsersState extends State<Users> {
       try {
         GetAllUsersResponse resp =
             await api.apiServiceClient.getAllUsers(GetAllUsersRequest());
+        debugPrint('resp: $resp');
         setState(() {
           users = resp.users;
         });

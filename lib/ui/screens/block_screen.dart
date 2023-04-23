@@ -266,9 +266,14 @@ class _BlockScreenState extends State<BlockScreen> {
       }
     }
 
-    final User fromUser = txEx.getFromUser();
-    final fromUserPhoneNumber =
-        fromUser.mobileNumber.number.formatPhoneNumber();
+    final User? fromUser = txEx.getFromUser();
+    final fromUserPhoneNumber = fromUser != null
+        ? fromUser.mobileNumber.number.formatPhoneNumber()
+        : "n/a";
+
+    final String fromUserName = fromUser?.userName ?? "n/a";
+    final String fromUserAccountId =
+        txEx.getFromUserAccountId().toShortHexString();
 
     // from
     tiles.add(
@@ -279,18 +284,21 @@ class _BlockScreenState extends State<BlockScreen> {
           mainAxisAlignment: MainAxisAlignment.start,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(fromUser.userName),
-            Text(fromUser.accountId.data.toShortHexString()),
+            Text(fromUserName),
+            Text(fromUserAccountId),
             const SizedBox(height: 6),
           ],
         ),
         trailing: Text(fromUserPhoneNumber,
             style: CupertinoTheme.of(context).textTheme.textStyle),
         leading: const Icon(CupertinoIcons.arrow_right, size: 28),
-        onTap: () {
-          context.pushNamed(ScreenNames.user,
-              params: {'accountId': fromUser.accountId.data.toHexString()});
-        },
+        onTap: fromUser != null
+            ? () {
+                context.pushNamed(ScreenNames.user, params: {
+                  'accountId': txEx.getFromUserAccountId().toHexString()
+                });
+              }
+            : null,
       ),
     );
 

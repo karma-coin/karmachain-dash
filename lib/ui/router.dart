@@ -7,7 +7,6 @@ import 'package:karmachain_dash/ui/screens/blocks_screen.dart';
 import 'package:karmachain_dash/ui/screens/karmachain.dart';
 import 'package:karmachain_dash/ui/screens/leader_board.dart';
 import 'package:karmachain_dash/ui/screens/users_screen.dart';
-import 'package:karmachain_dash/ui/widgets/transaction.dart';
 
 /// Shared paths / urls used across the app
 class ScreenPaths {
