@@ -33,8 +33,14 @@ class _UsersState extends State<Users> {
         GetAllUsersResponse resp =
             await api.apiServiceClient.getAllUsers(GetAllUsersRequest());
         debugPrint('resp: $resp');
+
+        List<User> newUsers = resp.users;
+        newUsers = newUsers
+            .where((u) => !u.userName.endsWith('[old account]'))
+            .toList();
+
         setState(() {
-          users = resp.users;
+          users = newUsers;
         });
       } catch (e) {
         apiOffline = true;
