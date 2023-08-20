@@ -41,7 +41,7 @@ class _BlocksState extends State<Blocks> {
 
         setState(() {
           blocks = resp.blocks;
-          // debugPrint(resp.toString());
+          debugPrint(blocks.toString());
           // debugPrint(genesis_data.toString());
         });
       } catch (e) {
